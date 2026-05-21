@@ -6,7 +6,6 @@ import math
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-
 num_timesteps = 1000
 betas = torch.linspace(1e-4, 0.02, num_timesteps)
 alphas = 1.0 - betas
@@ -107,6 +106,7 @@ def train():
         transforms.Resize(32),
         transforms.ToTensor(),
         transforms.Lambda(lambda x: x.repeat(3, 1, 1)),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
     dataset = torchvision.datasets.MNIST(root='./data', train=True, download=True, transform=transform)
     train_loader = DataLoader(dataset, batch_size=64, shuffle=True, num_workers=0)
@@ -118,7 +118,7 @@ def train():
     global alphas_bar
     alphas_bar = alphas_bar.to(device)
 
-    num_epochs = 50
+    num_epochs = 300
     for epoch in range(num_epochs):
         total_loss = 0.0
         for images, _ in train_loader:
